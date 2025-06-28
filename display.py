@@ -122,32 +122,54 @@ class WeaponsList:
         self.group.hidden = True
         display.root_group.append(self.group)
 
+    def draw_idx(self, idx):
+        for wp_idx, weapon in enumerate(self.group):
+            if wp_idx != idx:
+                weapon[0].text = " " + weapon[0].text[1:]
+            else:
+                weapon[0].text = ">" + weapon[0].text[1:]
+
     def _add_weapon(self, weapon):
         y_pos = 0
         for widget in self.group:
-            _, _, _, height = widget.bounding_box
-            _, y = widget.anchored_position
+            _, _, _, height = widget[0].bounding_box
+            _, y = widget[0].anchored_position
             wid_y = y + height
             print(f"wid_y: {wid_y}, height: {height}")
-            if wid_y > y_pos:
-                y_pos = wid_y + height
-        print(f"Y_pos: {y_pos}")
+            y_pos = max(y_pos, wid_y)
 
+        group = displayio.Group(x=0, y=y_pos)
         print(f"y_pos: {y_pos}")
-        test_label = adafruit_display_text.bitmap_label.Label(
-            FONT, text=weapon, scale=2
+        name_label = adafruit_display_text.bitmap_label.Label(
+            FONT, text=f" {weapon}", scale=2
         )
-        test_label.color = FG_COLOR
-        test_label.background_color = BG_COLOR
-        test_label.anchor_point = (0.0, 0.0)
-        test_label.anchored_position = (LEFT_PADDING, y_pos)
-        self.group.append(test_label)
+        name_label.color = FG_COLOR
+        name_label.background_color = BG_COLOR
+        name_label.anchor_point = (0.0, 0.0)
+        name_label.anchored_position = (0, y_pos)
+        group.append(name_label)
+
+        to_hit_label = adafruit_display_text.bitmap_label.Label(
+            FONT, text="14", scale=2
+        )
+        to_hit_label.color = FG_COLOR
+        to_hit_label.background_color = BG_COLOR
+        to_hit_label.anchor_point = (1.0, 0.0)
+        to_hit_label.anchored_position = (display.width - (3 * LEFT_PADDING), y_pos)
+        group.append(to_hit_label)
+
+        self.group.append(group)
 
     def activate(self):
         self.group.hidden = False
 
     def deactivate(self):
         self.group.hidden = True
+
+    def update_to_hit(self, idx, to_hit):
+        weap = self.group[idx]
+        to_hit_label = weap[-1]
+        to_hit_label.text = str(to_hit)
 
 
 def auto_refresh(enable):
