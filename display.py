@@ -110,6 +110,12 @@ def setup():
     return Labels(*labels)
 
 
+class WeaponEntry:
+
+    def __init__(self, group):
+        self.group = group
+
+
 class WeaponsList:
 
     def __init__(self, weapons):
@@ -129,6 +135,10 @@ class WeaponsList:
             else:
                 weapon[0].text = ">" + weapon[0].text[1:]
 
+    def update_weap_str(self, idx):
+        weap_group = self.group[idx]
+        weap_group[0].text = weap_group[0].text[0] + self.weapons[idx].disp_name
+
     def _add_weapon(self, weapon):
         y_pos = 0
         for widget in self.group:
@@ -139,14 +149,14 @@ class WeaponsList:
             y_pos = max(y_pos, wid_y)
 
         group = displayio.Group(x=0, y=y_pos)
-        print(f"y_pos: {y_pos}")
         name_label = adafruit_display_text.bitmap_label.Label(
-            FONT, text=f" {weapon}", scale=2
+            FONT, text=f" {weapon.disp_name}", scale=2
         )
         name_label.color = FG_COLOR
         name_label.background_color = BG_COLOR
         name_label.anchor_point = (0.0, 0.0)
         name_label.anchored_position = (0, y_pos)
+        name_label.line_spacing = 0.9
         group.append(name_label)
 
         to_hit_label = adafruit_display_text.bitmap_label.Label(
@@ -156,6 +166,7 @@ class WeaponsList:
         to_hit_label.background_color = BG_COLOR
         to_hit_label.anchor_point = (1.0, 0.0)
         to_hit_label.anchored_position = (display.width - (3 * LEFT_PADDING), y_pos)
+
         group.append(to_hit_label)
 
         self.group.append(group)

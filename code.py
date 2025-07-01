@@ -1,14 +1,9 @@
-import collections
+import gc
 import time
 
 import board
-import busio
 import digitalio
-import displayio
-import framebufferio
 import rotaryio
-import sharpdisplay
-import terminalio
 
 import display
 import mechs
@@ -55,8 +50,10 @@ class EventEncoder(EventDispatcher):
         if diff != 0:
             if self.push_button.value:
                 self.dispatch_event(diff)
-                return
+                return True
             self.pressed.dispatch_event(diff)
+            return True
+        return False
 
 
 def main():
@@ -65,30 +62,35 @@ def main():
     labels = display.setup()
 
     mech_widgets = [
-        mechs.Mech("Urban Mech", ["LRM 55", "LB-X 10", "M Laser"], encs, labels),
-        mechs.Mech("Locust", ["ER PPC", "AC-20", "Large Laser"], encs, labels),
+        mechs.Mech("Urban Mech", ["MML 3", "Medium Laser"], encs, labels),
+        mechs.Mech("Locust", ["ER PPC", "Autocannon/20", "Large Laser"], encs, labels),
     ]
 
     ms = mechs.MechSwitcher(encs[0], mech_widgets)
 
-    need_refresh = [False]
-
-    def do_refresh():
-        need_refresh[0] = True
-
-    for enc in encs:
-        enc.register_fn(lambda x: do_refresh())
-        enc.pressed.register_fn(lambda x: do_refresh())
-
     display.refresh()
+    last_update = time.monotonic()
+    need_gc = False
     while True:
+        updated = False
         for enc in encs:
-            enc.update()
+            if enc.update():
+                updated = True
 
-        if need_refresh[0]:
-            print("refresh")
+        # if need_refresh[0]:
+        if updated:
             display.refresh()
-            need_refresh[0] = False
+            last_update = time.monotonic()
+            need_gc = True
+
+        if need_gc:
+            since_update = time.monotonic() - last_update
+            if since_update > 1:
+                print(gc.mem_free())
+                gc.collect()
+                print(gc.mem_free())
+                last_update = time.monotonic()
+                need_gc = False
 
 
 main()

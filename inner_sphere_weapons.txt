@@ -1,0 +1,497 @@
+Autocannon/2
+ DB, S
+ 4
+ 8
+ 16
+ 24
+ 0
+Autocannon/5
+ DB, S
+ 3
+ 6
+ 12
+ 18
+ 0
+Autocannon/10
+ DB, S
+ 0
+ 5
+ 10
+ 15
+ 0
+Autocannon/20
+ DB, S
+ 0
+ 3
+ 6
+ 9
+ 0
+Light Gauss Rifle
+ DB, X
+ 3
+ 8
+ 17
+ 25
+ 0
+Gauss Rifle
+ DB, X
+ 2
+ 7
+ 15
+ 22
+ 0
+Heavy Gauss Rifle
+ DB, X, V
+ 4
+ 6
+ 13
+ 20
+ 0
+LB 2-X AC**
+ DB, C/S/F‡‡
+Pellet
+ -
+ 4
+ 9
+ 18
+ 27
+ -1
+Slug
+ -
+ 4
+ 9
+ 18
+ 27
+ 0
+LB 5-X AC**
+ DB, C/S/F‡‡
+Pellet
+ -
+ 3
+ 7
+ 14
+ 21
+ -1
+Slug
+ -
+ 3
+ 7
+ 14
+ 21
+ 0
+LB 20-X AC**
+ DB, C/S/F‡‡
+ Pellet
+ -
+ 0
+ 4
+ 8
+ 12
+ -1
+ Slug
+ -
+ 0
+ 4
+ 8
+ 12
+ 0
+Light AC/2
+ DB, S
+ 0
+ 6
+ 12
+ 18
+ 0
+Light AC/5
+ DB, S
+ 0
+ 5
+ 10
+ 15
+ 0
+Light Machine Gun
+ DB, AI§
+ 0
+ 2
+ 4
+ 6
+ 0
+Machine Gun
+ DB, AI§
+ 0
+ 1
+ 2
+ 3
+ 0
+Heavy Machine Gun
+ DB, AI§
+ 0
+ 1
+ 2
+ -
+ 0
+Nail/Rivet Gun
+ DB, AI**
+ 0
+ 1
+ -
+ -
+ 0
+Rotary AC/2
+ DB, R/C
+ 0
+ 6
+ 12
+ 18
+ 0
+Rotary AC/5
+ DB, R/C
+ 0
+ 5
+ 10
+ 15
+ 0
+Ultra AC/2
+ DB, R/C
+ 3
+ 8
+ 17
+ 25
+ 0
+Ultra AC/5
+ DB, R/C
+ 2
+ 6
+ 13
+ 20
+ 0
+Ultra AC/10
+ DB, R/C
+ 0
+ 6
+ 12
+ 18
+ 0
+Ultra AC/20
+ DB, R/C
+ 0
+ 3
+ 7
+ 10
+ 0
+ER Large Laser
+ DE
+ 0
+ 7
+ 14
+ 19
+ 0
+ER Medium Laser
+ DE
+ 0
+ 4
+ 8
+ 12
+ 0
+ER Small Laser
+ DE
+ 0
+ 2
+ 4
+ 5
+ 0
+Flamer
+ DE, H, AI§
+ 0
+ 1
+ 2
+ 3
+ 0
+Flamer (Vehicle)
+ DE, H, AI§
+ 0
+ 1
+ 2
+ 3
+ 0
+Large Laser
+ DE
+ 0
+ 5
+ 10
+ 15
+ 0
+Medium Laser
+ DE
+ 0
+ 3
+ 6
+ 9
+ 0
+Small Laser
+ DE
+ 0
+ 1
+ 2
+ 3
+ 0
+Plasma Rifle
+ DE, H
+ 0
+ 5
+ 10
+ 15
+ 0
+Light PPC
+ DE
+ 3
+ 6
+ 12
+ 18
+ 0
+PPC
+ DE
+ 3
+ 6
+ 12
+ 18
+ 0
+Heavy PPC
+ DE
+ 3
+ 6
+ 12
+ 18
+ 0
+ER PPC
+ DE
+ 0
+ 7
+ 14
+ 23
+ 0
+Snub-Nose PPC
+ DE, V
+ 0
+ 9
+ 13
+ 15
+ 0
+Large Pulse Laser
+ P
+ 0
+ 3
+ 7
+ 10
+ -2
+Medium Pulse Laser
+ P
+ 0
+ 2
+ 4
+ 6
+ -2
+Small Pulse Laser
+ P, AI§
+ 0
+ 1
+ 2
+ 3
+ -2
+LRM 5
+ M, C, S
+ 6
+ 7
+ 14
+ 21
+ 0
+LRM 10
+ M, C, S
+ 6
+ 7
+ 14
+ 21
+ 0
+LRM 15
+ M, C, S
+ 6
+ 7
+ 14
+ 21
+ 0
+LRM 20
+ M, C, S
+ 6
+ 7
+ 14
+ 21
+ 0
+MML 3**
+ M, C, S
+LRM ammo
+ -
+ 6
+ 7
+ 14
+ 21
+ 0
+SRM ammo
+ -
+ 0
+ 3
+ 6
+ 9
+ 0
+MML 5**
+ M, C, S
+LRM ammo
+ -
+ 6
+ 7
+ 14
+ 21
+ 0
+SRM ammo
+ -
+ 0
+ 3
+ 6
+ 9
+ 0
+MML 7**
+ M, C, S
+LRM ammo
+ -
+ 6
+ 7
+ 14
+ 21
+ 0
+SRM ammo
+ -
+ 0
+ 3
+ 6
+ 9
+ 0
+MML 9**
+ M, C, S
+LRM ammo
+ -
+ 6
+ 7
+ 14
+ 21
+ 0
+SRM ammo
+ -
+ 0
+ 3
+ 6
+ 9
+ 0
+MRM 10
+ M, C
+ 0
+ 3
+ 8
+ 15
+ +1
+MRM 20
+ M, C
+ 0
+ 3
+ 8
+ 15
+ +1
+MRM 30
+ M, C
+ 0
+ 3
+ 8
+ 15
+ +1
+MRM 40
+ M, C
+ 0
+ 3
+ 8
+ 15
+ +1
+Narc Missile Beacon
+ M, E, S
+ 0
+ 3
+ 6
+ 9
+ 0
+Improved Narc Launcher
+ M, E, S
+ 0
+ 4
+ 9
+ 15
+ 0
+Rocket Launcher 10
+ M, C, OS
+ 0
+ 5
+ 11
+ 18
+ +1
+Rocket Launcher 15
+ M, C, OS
+ 0
+ 4
+ 9
+ 15
+ +1
+Rocket Launcher 20
+ M, C, OS
+ 0
+ 3
+ 7
+ 12
+ +1
+SRM 2
+ M, C, S
+ 0
+ 3
+ 6
+ 9
+ 0
+SRM 4
+ M, C, S
+ 0
+ 3
+ 6
+ 9
+ 0
+SRM 6
+ M, C, S
+ 0
+ 3
+ 6
+ 9
+ 0
+Streak SRM 2
+ M, C**
+ 0
+ 3
+ 6
+ 9
+ 0
+Streak SRM 4
+ M, C**
+ 0
+ 3
+ 6
+ 9
+ 0
+Streak SRM 6
+ M, C**
+ 0
+ 3
+ 6
+ 9
+ 0
