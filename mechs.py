@@ -331,12 +331,13 @@ class WeaponsList:
         # print(weap.ranges)
         rng, to_hit = weap.mod_at(shot_rng)
 
-        if self.target_comp and self.target_comp.enabled:
-            if any(char in weap.types for char in "DP"):
-                to_hit -= 1
+        if isinstance(to_hit, int):
+            if self.target_comp and self.target_comp.enabled:
+                if any(char in weap.types for char in "DP"):
+                    to_hit -= 1
 
         if rng is Rngs.OUT_OF:
-            self.weapon_disp.update_to_hit(idx, "X")
+            self.weapon_disp.update_to_hit(idx, " X")
             return
         if rng is Rngs.NAN:
             self.weapon_disp.update_to_hit(idx, " ")
