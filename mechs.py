@@ -6,12 +6,6 @@ from events import EventDispatcher
 Entrys = collections.namedtuple("Entrys", ["gun", "atk", "tar", "other", "rng"])
 
 
-class RngState:
-    NORM = "NORM"
-    OUT_OF_RANGE = "OUT_OF_RANGE"
-    UNDER_MIN = "UNDER_MIN"
-
-
 class WeaponsNotFoundError(Exception):
     pass
 
@@ -22,57 +16,7 @@ class Rngs:
     MEDIUM = "Medium"
     LONG = "Long"
     OUT_OF = "Out of Range"
-
-
-class Gator:
-
-    def __init__(self):
-        self.gun = 0
-        self.atk = 0
-        self.tar = 0
-        self.other = 0
-        self.range = 0
-
-    def to_hit(self):
-        return self.gun + self.atk + self.tar + self.other + self.range
-
-
-class RngBracket:
-
-    def __init__(self, rng_str, mod, name):
-        divider_char = "-"
-        invalid_rng = "-"
-
-        self.invalid = False
-
-        if rng_str == invalid_rng:
-            self.invalid = True
-
-        elif divider_char in rng_str:
-            # print(rng_str)
-            rngs = rng_str.split(divider_char)
-            # print(rngs)
-
-            self.start = int(rngs[0])
-            self.end = int(rngs[1])
-        else:
-            # print(rng_str)
-            self.start = int(rng_str)
-            self.end = int(rng_str)
-
-        self.mod = mod
-        self.name = name
-
-    def inside(self, rng):
-        if self.invalid:
-            return False
-
-        if self.start <= int(rng) <= self.end:
-            return True
-        return False
-
-    def __repr__(self):
-        return f"RngBracket({self.start}-{self.end}, {self.name}, {self.mod})"
+    NAN = "Not a Range"
 
 
 class Ranges:
@@ -123,14 +67,17 @@ class Ranges:
         return (self.min - rng) + 1
 
 
-def load_weapons(names):
+def load_weapons(tech, names):
 
     if not isinstance(names, list):
         raise RuntimeError(f"Invalid parameter {names}")
 
+    file_name = "inner_sphere_weapons.txt"
+    if tech == "Clan":
+        file_name = "clan_weapons.txt"
     found_weapons = []
     found_weap_names = []
-    with open("inner_sphere_weapons.txt", "rt") as dat:
+    with open(file_name, "rt") as dat:
 
         while True:
             lines = []
@@ -138,7 +85,7 @@ def load_weapons(names):
 
             name = dat.readline().strip()
 
-            # print(f"Name multiammo ?  {name}")
+            print(f"Name multiammo ?  {name}")
             if name.endswith(
                 "**"
             ):  # This is for MML and other weapons with multiple ammos
@@ -174,7 +121,11 @@ def load_weapons(names):
                         break
                     lines.append(line)
 
-                weapon = Weapon(lines)
+                try:
+                    weapon = Weapon(lines)
+                finally:
+                    print(f"Looking for: {names}")
+                    print(f"found: {found_weapons}")
 
             # print(weapon.name)
             if weapon.name in names:
@@ -189,12 +140,22 @@ def load_weapons(names):
 
 class Entry(EventDispatcher):
 
-    def __init__(self, label, encoder, on_pressed=False):
+    def __init__(
+        self, label, encoder, on_pressed=False, min=None, max=None, initial_val=0
+    ):
         super().__init__()
         self.value = 0
         self.label = label
         self.encoder = encoder
         self.on_pressed = on_pressed
+        self.min = 0
+        if min:
+            self.min = min
+
+        self.value = self.min
+        if initial_val:
+            self.value = initial_val
+        self.max = max
 
     def activate(self):
         if self.on_pressed:
@@ -210,7 +171,11 @@ class Entry(EventDispatcher):
         self.encoder.deregister_fn(self.on_update)
 
     def on_update(self, diff):
-        self.value = max(self.value + diff, 0)
+        self.value += diff
+        self.value = max(self.value, self.min)
+        if self.max:
+            self.value = min(self.value, self.max)
+
         self.label.text = str(self.value)
         # print(self.callback_fns)
         self.dispatch_event()
@@ -250,12 +215,16 @@ class MultAmmoWeapon:
 
     def on_ammo_update(self, diff):
         self.ammo_idx = (self.ammo_idx + diff) % len(self.ammo_types)
+        return False
+
+    def mod_at(self, rng):
+        return self.curr_ammo.ranges.mod_at(rng)
 
 
 class Weapon:
 
     def __init__(self, weap_strs):
-        # print(f"{weap_strs}")
+        print(f"{weap_strs}")
         self.weap_strs = weap_strs
         self.name = weap_strs[0]
         self.types = weap_strs[1]
@@ -276,13 +245,46 @@ class Weapon:
         return f"Weapon({self.name},{self.types})"
 
     def on_ammo_update(self, diff):
+        return False
+
+    def mod_at(self, rng):
+        return self.ranges.mod_at(rng)
+
+
+class TargetingComp:
+    def __init__(self):
+        self.enabled = True
+        self.types = "E"
+
+    @property
+    def disp_name(self):
+        return "Target Comp"
+
+    def on_update(self, diff):
         pass
+
+    def __repr__(self):
+        return f"Weapon({self.name},{self.types})"
+
+    def on_ammo_update(self, diff):
+        for _ in range(diff):
+            self.enabled = not self.enabled
+        return True
+
+    def mod_at(self, _):
+        if self.enabled:
+            return Rngs.NAN, None
+        return Rngs.OUT_OF, None
 
 
 class WeaponsList:
 
-    def __init__(self, weapons, enc):
+    def __init__(self, weapons, enc, target_comp):
         self.weapons = weapons
+        self.target_comp = None
+        if target_comp:
+            self.target_comp = TargetingComp()
+            weapons.insert(0, self.target_comp)
         self.weapon_disp = display.WeaponsList(weapons)
         self.idx = 0
         self.weapon_disp.draw_idx(self.idx)
@@ -310,8 +312,12 @@ class WeaponsList:
         self.weapon_disp.draw_idx(self.idx)
 
     def update_ammo_selection(self, diff):
-        self.selected_weapon.on_ammo_update(diff)
+        update_all = self.selected_weapon.on_ammo_update(diff)
         self.weapon_disp.update_weap_str(self.idx)
+
+        if update_all:
+            self.update_to_hit(self._gat, self._shot_rng)
+            return
         self._update_weap(self.idx, self._gat, self._shot_rng)
 
     def update_to_hit(self, gat, shot_rng):
@@ -323,34 +329,47 @@ class WeaponsList:
     def _update_weap(self, idx, gat, shot_rng):
         weap = self.weapons[idx]
         # print(weap.ranges)
-        rng, to_hit = weap.ranges.mod_at(shot_rng)
+        rng, to_hit = weap.mod_at(shot_rng)
+
+        if self.target_comp and self.target_comp.enabled:
+            if any(char in weap.types for char in "DP"):
+                to_hit -= 1
+
         if rng is Rngs.OUT_OF:
             self.weapon_disp.update_to_hit(idx, "X")
             return
-        self.weapon_disp.update_to_hit(idx, to_hit + gat)
+        if rng is Rngs.NAN:
+            self.weapon_disp.update_to_hit(idx, " ")
+            return
+        self.weapon_disp.update_to_hit(idx, " " + str(to_hit + gat))
 
 
 class Mech:
 
-    def __init__(self, name, weapons, encoders, labels):
+    def __init__(
+        self, name, tech, weapons, encoders, labels, target_comp=False, gunnery=4
+    ):
         self.name = name
         self.encoders = encoders
         self.labels = labels
+        self.tech = tech
+        self.target_comp = target_comp
 
         self.entrys = Entrys(
-            Entry(labels.gun, encoders[0], on_pressed=True),
+            Entry(labels.gun, encoders[0], on_pressed=True, initial_val=gunnery),
             Entry(labels.atk, encoders[2]),
             Entry(labels.tar, encoders[3]),
             Entry(labels.other, encoders[4]),
-            Entry(labels.rng, encoders[5]),
+            Entry(labels.rng, encoders[5], min=1),
         )
 
         for entry in self.entrys:
             entry.register_fn(self.update_gator)
 
-        self.weapons = load_weapons(weapons)
+        self.weapons = load_weapons(tech, weapons)
 
-        self.weapons = WeaponsList(self.weapons, encoders[1])
+        self.weapons = WeaponsList(self.weapons, encoders[1], self.target_comp)
+        self.update_gator()
 
     def activate(self):
         self.labels.name.text = self.name

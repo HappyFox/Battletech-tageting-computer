@@ -28,7 +28,7 @@ LEFT_PADDING = 5
 
 COL_NAMES = ["G", "A", "T", "O", "R"]
 
-Labels = collections.namedtuple("labels", ["gun", "atk", "tar", "other", "rng", "name"])
+Labels = collections.namedtuple("Labels", ["gun", "atk", "tar", "other", "rng", "name"])
 
 
 def cell_width():
@@ -166,6 +166,7 @@ class WeaponsList:
         to_hit_label.background_color = BG_COLOR
         to_hit_label.anchor_point = (1.0, 0.0)
         to_hit_label.anchored_position = (display.width - (3 * LEFT_PADDING), y_pos)
+        to_hit_label.left_padding = 10
 
         group.append(to_hit_label)
 

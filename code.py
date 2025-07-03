@@ -62,8 +62,32 @@ def main():
     labels = display.setup()
 
     mech_widgets = [
-        mechs.Mech("Urban Mech", ["MML 3", "Medium Laser"], encs, labels),
-        mechs.Mech("Locust", ["ER PPC", "Autocannon/20", "Large Laser"], encs, labels),
+        mechs.Mech(
+            "Notos Prime",
+            "Clan",
+            ["Medium Pulse Laser"],
+            encs,
+            labels,
+            target_comp=True,
+            gunnery=3,
+        ),
+        mechs.Mech(
+            "Ballius Prime",
+            "Clan",
+            ["ER Large Laser", "Medium Pulse Laser", "Flamer"],
+            encs,
+            labels,
+            gunnery=3,
+        ),
+        mechs.Mech(
+            "Athena",
+            "Clan",
+            ["HAG 30", "ER Medium Laser", "AP Gauss Rifle"],
+            encs,
+            labels,
+            gunnery=3,
+            target_comp=True,
+        ),
     ]
 
     ms = mechs.MechSwitcher(encs[0], mech_widgets)
