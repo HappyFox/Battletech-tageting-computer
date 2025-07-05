@@ -69,7 +69,7 @@ def main():
             encs,
             labels,
             target_comp=True,
-            gunnery=3,
+            gunnery=2,
         ),
         mechs.Mech(
             "Ballius Prime",
@@ -80,13 +80,12 @@ def main():
             gunnery=3,
         ),
         mechs.Mech(
-            "Athena",
+            "Doom Courser",
             "Clan",
-            ["HAG 30", "ER Medium Laser", "AP Gauss Rifle"],
+            ["Gauss Rifle", "LRM 20", "ER PPC"],
             encs,
             labels,
             gunnery=3,
-            target_comp=True,
         ),
     ]
 
