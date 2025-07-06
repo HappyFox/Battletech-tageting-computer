@@ -1,0 +1,30 @@
+[
+        {
+                "name":"Balius Prime",
+                "tech": "Clan",
+                "gunnery": 3,
+                "weapons":
+                [
+                        {"name":"ER Large Laser", "loc":"LT"},
+                        {"name":"Medium Pulse Laser", "loc":"LT"},
+                        {"name":"ER Large Laser", "loc":"RT"},
+                        {"name":"Medium Pulse Laser", "loc":"RT"},
+                        {"name":"Medium Pulse Laser", "loc":"CT", "rev":true}
+                ]
+                
+        },
+        {
+                "name":"Notos Prime",
+                "tech": "Clan",
+                "gunnery": 3,
+                "weapons": [
+                        {"name":"Medium Pulse Laser", "loc":"LT"},
+                        {"name":"Medium Pulse Laser", "loc":"LT"},
+                        {"name":"Medium Pulse Laser", "loc":"RT"},
+                        {"name":"Medium Pulse Laser", "loc":"RT"},
+                        {"name":"Medium Pulse Laser", "loc":"CT"}
+
+                ],
+                "targeting_comp": true
+        }
+]

@@ -1,4 +1,5 @@
 import collections
+import json
 
 import display
 from events import EventDispatcher
@@ -67,16 +68,18 @@ class Ranges:
         return (self.min - rng) + 1
 
 
-def load_weapons(tech, names):
+def load_weapons(tech, weapons):
 
-    if not isinstance(names, list):
-        raise RuntimeError(f"Invalid parameter {names}")
+    if not isinstance(weapons, list):
+        raise RuntimeError(f"Invalid parameter {weapons}")
+
+    weapon_names = {weap["name"] for weap in weapons}
+    print(weapon_names)
 
     file_name = "inner_sphere_weapons.txt"
     if tech == "Clan":
         file_name = "clan_weapons.txt"
-    found_weapons = []
-    found_weap_names = []
+    found_weapons = {}
     with open(file_name, "rt") as dat:
 
         while True:
@@ -84,6 +87,9 @@ def load_weapons(tech, names):
             weapon = None
 
             name = dat.readline().strip()
+
+            if name == "":
+                raise RuntimeError("Weapons Not found")
 
             print(f"Name multiammo ?  {name}")
             if name.endswith(
@@ -121,21 +127,26 @@ def load_weapons(tech, names):
                         break
                     lines.append(line)
 
-                try:
-                    weapon = Weapon(lines)
-                finally:
-                    print(f"Looking for: {names}")
-                    print(f"found: {found_weapons}")
+                weapon = Weapon(lines)
 
             # print(weapon.name)
-            if weapon.name in names:
-                found_weapons.append(weapon)
-                found_weap_names.append(weapon.name)
-            if len(found_weapons) == len(names):
-                return found_weapons
+            if weapon.name in weapon_names:
+                found_weapons[weapon.name] = weapon
+            if len(found_weapons) == len(weapon_names):
+                print("found the weapons")
+                break
+    print(f"found weapons : {found_weapons}")
 
-    not_found = [weap for weap in names if weap not in found_weap_names]
-    raise WeaponsNotFoundError(f"Weapons not found: {not_found}")
+    instanced_weaps = []
+    for weap in weapons:
+        weap_inst = found_weapons[weap["name"]]
+        instanced_weap = weap_inst.copy()
+        instanced_weap.loc = weap["loc"]
+        if "rev" in weap:
+            instanced_weap.rev = weap["rev"]
+        instanced_weaps.append(instanced_weap)
+
+    return instanced_weaps
 
 
 class Entry(EventDispatcher):
@@ -234,6 +245,9 @@ class Weapon:
             weap_strs[2], weap_strs[3], weap_strs[4], weap_strs[5], self.to_hit_mod
         )
 
+        self.loc = None
+        self.rev = False
+
     @property
     def disp_name(self):
         return self.name
@@ -250,11 +264,17 @@ class Weapon:
     def mod_at(self, rng):
         return self.ranges.mod_at(rng)
 
+    def copy(self):
+        return Weapon(self.weap_strs)
+
 
 class TargetingComp:
     def __init__(self):
+        self.name = "Target Comp"
         self.enabled = True
         self.types = "E"
+        self.loc = None
+        self.rev = False
 
     @property
     def disp_name(self):
@@ -345,19 +365,43 @@ class WeaponsList:
         self.weapon_disp.update_to_hit(idx, " " + str(to_hit + gat))
 
 
-class Mech:
+def load_mechs(encoders, labels):
 
+    mechs = []
+    with open("mechs.json", "rt") as dat:
+        for mech in json.load(dat):
+
+            mechs.append(Mech(mech, encoders, labels))
+
+    return mechs
+
+
+class Mech:
+    """
     def __init__(
         self, name, tech, weapons, encoders, labels, target_comp=False, gunnery=4
     ):
-        self.name = name
+    """
+
+    def __init__(self, config, encoders, labels):
+
+        self.name = config["name"]
         self.encoders = encoders
         self.labels = labels
-        self.tech = tech
-        self.target_comp = target_comp
+        self.tech = config["tech"]
+
+        self.target_comp = False
+        if "targeting_comp" in config:
+            self.target_comp = config["targeting_comp"]
+        print(f"{self.name} : targeting comp:{self.target_comp}")
+        print(config)
+
+        self.gunnery = config["gunnery"]
+        self.config = config
+        self.weapons = config["weapons"]
 
         self.entrys = Entrys(
-            Entry(labels.gun, encoders[0], on_pressed=True, initial_val=gunnery),
+            Entry(labels.gun, encoders[0], on_pressed=True, initial_val=self.gunnery),
             Entry(labels.atk, encoders[2]),
             Entry(labels.tar, encoders[3]),
             Entry(labels.other, encoders[4]),
@@ -367,7 +411,8 @@ class Mech:
         for entry in self.entrys:
             entry.register_fn(self.update_gator)
 
-        self.weapons = load_weapons(tech, weapons)
+        self.weapons = load_weapons(self.tech, self.weapons)
+        print(type(self.weapons))
 
         self.weapons = WeaponsList(self.weapons, encoders[1], self.target_comp)
         self.update_gator()

@@ -4,7 +4,6 @@ import board
 import busio
 import displayio
 import framebufferio
-import rotaryio
 import sharpdisplay
 import terminalio
 
@@ -16,7 +15,6 @@ from adafruit_display_shapes.line import Line
 from adafruit_display_text.label import Label
 
 spi = busio.SPI(clock=board.GP2, MOSI=board.GP3)
-# spi = busio.SPI(board.SCK, MOSI=board.MOSI)
 framebuffer = sharpdisplay.SharpMemoryFramebuffer(spi, board.GP1, 400, 240)
 display = framebufferio.FramebufferDisplay(framebuffer)
 
@@ -139,6 +137,19 @@ class WeaponsList:
         weap_group = self.group[idx]
         weap_group[0].text = weap_group[0].text[0] + self.weapons[idx].disp_name
 
+    def update_to_hit(self, idx, to_hit):
+        weap = self.group[idx]
+
+        to_hit_str = " " + str(to_hit)
+
+        print(self.weapons)
+        print(dir(self.weapons[idx]))
+        if self.weapons[idx].rev:
+            to_hit_str = " R" + to_hit_str
+
+        to_hit_label = weap[-1]
+        to_hit_label.text = to_hit_str
+
     def _add_weapon(self, weapon):
         y_pos = 0
         for widget in self.group:
@@ -177,11 +188,6 @@ class WeaponsList:
 
     def deactivate(self):
         self.group.hidden = True
-
-    def update_to_hit(self, idx, to_hit):
-        weap = self.group[idx]
-        to_hit_label = weap[-1]
-        to_hit_label.text = str(to_hit)
 
 
 def auto_refresh(enable):
