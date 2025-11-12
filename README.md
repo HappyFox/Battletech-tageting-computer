@@ -5,6 +5,6 @@ A simple hand held to hit calculator for the BattleTech minitures board game.
 
 Define the mechs you are playing with in `mechs.json`. The weapons lists are already in this code will allow the device to calculate the to hit from the range etc. You adjust which mech your on and the various stats with the encoders and it automatically updates.
 
-It was all hand soldered, so no 
+It was all hand soldered, so no pcb or circuit diagrams currently. If there is any intrest ping me and I will draw some up. 
 
 This runs on a [Raspberry pi Pico](https://www.adafruit.com/product/4864), with a [2.7" Sharp Memory display](https://www.adafruit.com/product/4694) and 6 rotatry encoders. Power is provided by 2 AAA batteries, which can directly drive everything. Don't forget a backflow diode for the batteries. As if you plug in the usb micro at the same time as the batteries are on you will cook them.
